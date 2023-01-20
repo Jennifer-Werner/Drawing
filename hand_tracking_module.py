@@ -39,6 +39,7 @@ class handDetector():
                     height, width, channel = img.shape
                     channel_x, channel_y = int(ldmk.x * width), int(ldmk.y * height)
                     self.landmark_list.append([idx, channel_x, channel_y])
+                    print([idx, channel_x, channel_y])
 
                     if draw:
                         if idx == 8:
@@ -50,17 +51,16 @@ class handDetector():
 
         fingers = []
 
-        if self.landmark_list[4][1] > self.landmark_list[3][1]:
-            fingers.append(True)
-        else:
-            fingers.append(False)
-        for tip in range[8:21:4]:
-            if self.landmark_list[tip][2] > self.landmark_list[tip-1][2]:
+        if len(self.landmark_list) != 0:
+            if self.landmark_list[4][1] < self.landmark_list[3][1]:
                 fingers.append(True)
             else:
                 fingers.append(False)
-
-        cnt = fingers.count(True)
+            for tip in range(8, 21, 4):
+                if self.landmark_list[tip][2] < self.landmark_list[tip-1][2]:
+                    fingers.append(True)
+                else:
+                    fingers.append(False)
 
         return fingers
 
