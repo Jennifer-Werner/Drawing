@@ -31,19 +31,40 @@ class handDetector():
 
     def trackHands(self, img, num=0, draw=True):
 
-        landmark_list = []
+        self.landmark_list = []
 
         if self.results.multi_hand_landmarks:
 
                 for idx, ldmk in enumerate(self.results.multi_hand_landmarks[num].landmark):
                     height, width, channel = img.shape
                     channel_x, channel_y = int(ldmk.x * width), int(ldmk.y * height)
+                    self.landmark_list.append([idx, channel_x, channel_y])
 
                     if draw:
-                        cv2.circle(img, (channel_x, channel_y), 15, (255, 0, 255), cv2.FILLED)
-                        landmark_list.append([channel_x, channel_y])
+                        if idx == 8:
+                            cv2.circle(img, (channel_x, channel_y), 15, (255, 0, 0), -1)
 
-        return landmark_list
+        return self.landmark_list
+
+    def HandsUp(self):
+
+        fingers = []
+
+        if self.landmark_list[4][1] > self.landmark_list[3][1]:
+            fingers.append(True)
+        else:
+            fingers.append(False)
+        for tip in range[8:21:4]:
+            if self.landmark_list[tip][2] > self.landmark_list[tip-1][2]:
+                fingers.append(True)
+            else:
+                fingers.append(False)
+
+        cnt = fingers.count(True)
+
+        return fingers
+
+
 
 
 def main():
