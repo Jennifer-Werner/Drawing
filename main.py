@@ -23,8 +23,18 @@ while True:
 
     flipped_RGB = detector.findHands(flipped_RGB)
     landmark_list = detector.trackHands(flipped_RGB)
+
     if len(landmark_list) != 0:
         print(landmark_list[8])
+
+    tips = detector.HandsUp()
+
+    if len(tips) != 0:
+        if tips[1] and tips[2]:
+            cv2.putText(flipped_RGB, 'Selection Mode', (500, 420), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
+
+        if tips[1] and not tips[2]:
+            cv2.putText(flipped_RGB, 'Drawing Mode', (500, 420), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
 
     conT = time.time()
     fps = 1 / (conT - prevT)
