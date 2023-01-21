@@ -12,10 +12,11 @@ for num in os.listdir(file):
     img = cv2.imread(os.path.join(file, num))
     img = cv2.resize(img, (640, 62))
     img_list.append(img)
+menu = img_list[0]
 
 while True:
     ret, frame = cap.read()
-    frame[:62, :640] = img_list[0]
+    frame[:62, :640] = menu
     if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
         break
     flipped = np.fliplr(frame)
@@ -31,10 +32,13 @@ while True:
 
     if len(tips) != 0:
         if tips[1] and tips[2]:
-            cv2.putText(flipped_RGB, 'Selection Mode', (500, 420), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
+            cv2.putText(flipped_RGB, 'Selection Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
+            img = detector.Selection_Mode(flipped_RGB, img_list)
+            #img[:62, :640] = menu
+            #flipped_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         if tips[1] and not tips[2]:
-            cv2.putText(flipped_RGB, 'Drawing Mode', (500, 420), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
+            cv2.putText(flipped_RGB, 'Drawing Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
 
     conT = time.time()
     fps = 1 / (conT - prevT)
