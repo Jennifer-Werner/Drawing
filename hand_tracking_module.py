@@ -14,6 +14,8 @@ class handDetector():
         self.minTrack = minTrack
         self.modelC = modelC
 
+        self.color = [255, 255, 255]
+
         self.hands = mp.solutions.hands
         self.handsDetector = self.hands.Hands(self.mode, self.maxHands, modelC, self.minDetCon, self.minTrack)
         self.mpDraw = mp.solutions.drawing_utils
@@ -29,7 +31,7 @@ class handDetector():
 
         return img
 
-    def trackHands(self, img, num=0, draw=True):
+    def trackHands(self, img, num=0, draw=False):
 
         self.landmark_list = []
 
@@ -64,8 +66,38 @@ class handDetector():
 
         return fingers
 
+    def Selection_Mode(self, img, img_list):
 
+        if len(self.landmark_list) != 0:
 
+            if 35 < self.landmark_list[8][2] < 55:
+                if 30 < self.landmark_list[8][1] < 65:
+                    self.color = [220, 220, 220]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[6], cv2.COLOR_BGR2RGB))
+
+                elif 115 < self.landmark_list[8][1] < 145:
+                    self.color = [20, 144, 255]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[5], cv2.COLOR_BGR2RGB))
+
+                elif 195 < self.landmark_list[8][1] < 230:
+                    self.color = [0, 255, 0]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[4], cv2.COLOR_BGR2RGB))
+
+                elif 270 < self.landmark_list[8][1] < 300:
+                    self.color = [255, 255, 0]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[3], cv2.COLOR_BGR2RGB))
+
+                elif 355 < self.landmark_list[8][1] < 385:
+                    self.color = [255, 165, 0]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[2], cv2.COLOR_BGR2RGB))
+
+                elif 430 < self.landmark_list[8][1] < 470:
+                    self.color = [255, 0, 0]
+                    img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[1], cv2.COLOR_BGR2RGB))
+
+            cv2.rectangle(img, self.landmark_list[8][1:], self.landmark_list[12][1:], self.color, -1)
+
+        return img
 
 def main():
 
