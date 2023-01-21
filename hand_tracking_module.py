@@ -20,6 +20,9 @@ class handDetector():
         self.handsDetector = self.hands.Hands(self.mode, self.maxHands, modelC, self.minDetCon, self.minTrack)
         self.mpDraw = mp.solutions.drawing_utils
 
+        self.drawing = np.zeros([640, 480], np.uint8)
+        self.x, self.y = 0, 0
+
     def findHands(self, img, draw=True):
 
         self.results = self.handsDetector.process(img)
@@ -68,34 +71,60 @@ class handDetector():
 
     def Selection_Mode(self, img, img_list):
 
+        global menu
+        menu = img_list[0]
+
         if len(self.landmark_list) != 0:
 
             if 35 < self.landmark_list[8][2] < 55:
                 if 30 < self.landmark_list[8][1] < 65:
                     self.color = [220, 220, 220]
+                    menu = img_list[6]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[6], cv2.COLOR_BGR2RGB))
 
                 elif 115 < self.landmark_list[8][1] < 145:
                     self.color = [20, 144, 255]
+                    menu = img_list[5]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[5], cv2.COLOR_BGR2RGB))
 
                 elif 195 < self.landmark_list[8][1] < 230:
                     self.color = [0, 255, 0]
+                    menu = img_list[4]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[4], cv2.COLOR_BGR2RGB))
 
                 elif 270 < self.landmark_list[8][1] < 300:
                     self.color = [255, 255, 0]
+                    menu = img_list[3]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[3], cv2.COLOR_BGR2RGB))
 
                 elif 355 < self.landmark_list[8][1] < 385:
                     self.color = [255, 165, 0]
+                    menu = img_list[2]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[2], cv2.COLOR_BGR2RGB))
 
                 elif 430 < self.landmark_list[8][1] < 470:
                     self.color = [255, 0, 0]
+                    menu = img_list[1]
                     img[:62, :640] = np.fliplr(cv2.cvtColor(img_list[1], cv2.COLOR_BGR2RGB))
 
             cv2.rectangle(img, self.landmark_list[8][1:], self.landmark_list[12][1:], self.color, -1)
+
+        return img, menu
+
+    def Drawing_Mode(self, img):
+
+        self.lines = []
+
+        cv2.circle(img, (self.landmark_list[8][1:]), 15, self.color, -1)
+        if self.color == [255, 255, 255]:
+            print('yes')
+        else:
+            if self.x == self.y == 0:
+                self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
+            else:
+                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, 10)
+                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], self.color, 10)
+                self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
 
         return img
 
