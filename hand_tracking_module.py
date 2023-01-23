@@ -1,10 +1,11 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import math
 
 class handDetector():
 
-    def __init__(self, mode=False, maxHands=2, modelC=1, minDet=0.5, minTrack=0.5):
+    def __init__(self, mode=False, maxHands=1, modelC=1, minDet=0.5, minTrack=0.5):
 
         self.mode = mode
         self.maxHands = maxHands
@@ -20,6 +21,9 @@ class handDetector():
 
         self.drawing = np.zeros((480, 640, 3), np.uint8)
         self.x, self.y = 0, 0
+
+        self.drawing_size = 15
+        self.erasing_size = 40
 
     def findHands(self, img, draw=True):
 
@@ -42,7 +46,7 @@ class handDetector():
                     height, width, channel = img.shape
                     channel_x, channel_y = int(ldmk.x * width), int(ldmk.y * height)
                     self.landmark_list.append([idx, channel_x, channel_y])
-                    print([idx, channel_x, channel_y])
+                    #print([idx, channel_x, channel_y])
 
                     if draw:
                         if idx == 8:
@@ -52,20 +56,20 @@ class handDetector():
 
     def HandsUp(self):
 
-        fingers = []
+        self.fingers = []
 
         if len(self.landmark_list) != 0:
             if self.landmark_list[4][1] < self.landmark_list[3][1]:
-                fingers.append(True)
+                self.fingers.append(True)
             else:
-                fingers.append(False)
+                self.fingers.append(False)
             for tip in range(8, 21, 4):
                 if self.landmark_list[tip][2] < self.landmark_list[tip-1][2]:
-                    fingers.append(True)
+                    self.fingers.append(True)
                 else:
-                    fingers.append(False)
+                    self.fingers.append(False)
 
-        return fingers
+        return self.fingers
 
     def Selection_Mode(self, img, img_list):
 
@@ -114,20 +118,41 @@ class handDetector():
         self.lines = []
 
         if self.color == [220, 220, 220]:
-            cv2.circle(img, (self.landmark_list[8][1:]), 30, [220, 220, 220], -1)
+            cv2.circle(img, (self.landmark_list[8][1:]), self.erasing_size, [220, 220, 220], -1)
             if self.x == self.y == 0:
                 self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
             else:
-                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, 40)
-                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], [0, 0, 0], 40)
+                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, self.erasing_size)
+                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], [0, 0, 0], self.erasing_size)
                 self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
         else:
-            cv2.circle(img, (self.landmark_list[8][1:]), 15, self.color, -1)
+            cv2.circle(img, (self.landmark_list[8][1:]), self.drawing_size, self.color, -1)
             if self.x == self.y == 0:
                 self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
             else:
-                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, 10)
-                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], self.color, 10)
+                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, self.drawing_size)
+                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], self.color, self.drawing_size)
                 self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
 
         return img
+
+    def Size_Mode(self, img):
+
+        self.cx, self.cy = (self.landmark_list[8][1] + self.landmark_list[4][1]) // 2, (self.landmark_list[8][2] + self.landmark_list[4][2]) // 2
+        cv2.line(img, (self.landmark_list[8][1:]), (self.landmark_list[4][1:]), self.color, 3)
+        cv2.circle(img, (self.cx, self.cy), 10, self.color, -1)
+        length = math.dist(self.landmark_list[8][1:], self.landmark_list[4][1:])
+        cv2.rectangle(img, (50, 150), (85, 400), self.color, 3)
+        cv2.rectangle(img, (50, 400 - int(length - 50)), (85, 400), self.color, -1)
+
+        if self.color == [220, 220, 220]:
+            if length != 0:
+                self.erasing_size = 15 + int(length // 10)
+            cv2.circle(img, (self.landmark_list[8][1:]), self.erasing_size, self.color, -1)
+            cv2.circle(img, (self.landmark_list[4][1:]), self.erasing_size, self.color, -1)
+        else:
+            if length != 0:
+                self.drawing_size = 5 + int(length // 10)
+            cv2.circle(img, (self.landmark_list[8][1:]), self.drawing_size, self.color, -1)
+            cv2.circle(img, (self.landmark_list[4][1:]), self.drawing_size, self.color, -1)
+

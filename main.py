@@ -38,20 +38,28 @@ while True:
     tips = detector.HandsUp()
 
     if len(tips) != 0:
+
         #Selection Mode
-        if tips[1] and tips[2]:
+        if tips[1] and tips[2] and not tips[0]:
             cv2.putText(flipped_RGB, 'Selection Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
             img, menu = detector.Selection_Mode(flipped_RGB, img_list)
 
         #Drawing Mode
-        if tips[1] and not tips[2]:
+        elif tips[1] and not tips[2] and not tips[0]:
+
             #Erasing Mode
             if detector.color == [220, 220, 220]:
                 cv2.putText(flipped_RGB, 'Erasing Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
+
             #Drawing Mode
             else:
                 cv2.putText(flipped_RGB, 'Drawing Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
             img = detector.Drawing_Mode(flipped_RGB)
+
+        #Size Mode
+        elif tips[1] and tips[0] and not tips[2]:
+            cv2.putText(flipped_RGB, 'Size Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
+            img = detector.Size_Mode(flipped_RGB)
 
     #FPS
     conT = time.time()
