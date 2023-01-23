@@ -1,8 +1,6 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import time
-
 
 class handDetector():
 
@@ -20,7 +18,7 @@ class handDetector():
         self.handsDetector = self.hands.Hands(self.mode, self.maxHands, modelC, self.minDetCon, self.minTrack)
         self.mpDraw = mp.solutions.drawing_utils
 
-        self.drawing = np.zeros([640, 480], np.uint8)
+        self.drawing = np.zeros((480, 640, 3), np.uint8)
         self.x, self.y = 0, 0
 
     def findHands(self, img, draw=True):
@@ -115,10 +113,16 @@ class handDetector():
 
         self.lines = []
 
-        cv2.circle(img, (self.landmark_list[8][1:]), 15, self.color, -1)
-        if self.color == [255, 255, 255]:
-            print('yes')
+        if self.color == [220, 220, 220]:
+            cv2.circle(img, (self.landmark_list[8][1:]), 30, [220, 220, 220], -1)
+            if self.x == self.y == 0:
+                self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
+            else:
+                cv2.line(img, [self.x, self.y], self.landmark_list[8][1:], self.color, 40)
+                cv2.line(self.drawing, [self.x, self.y], self.landmark_list[8][1:], [0, 0, 0], 40)
+                self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
         else:
+            cv2.circle(img, (self.landmark_list[8][1:]), 15, self.color, -1)
             if self.x == self.y == 0:
                 self.x, self.y = self.landmark_list[8][1], self.landmark_list[8][2]
             else:

@@ -34,12 +34,9 @@ while True:
         if tips[1] and tips[2]:
             cv2.putText(flipped_RGB, 'Selection Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
             img, menu = detector.Selection_Mode(flipped_RGB, img_list)
-            #img[:62, :640] = np.fliplr(cv2.cvtColor(menu, cv2.COLOR_BGR2RGB))
-            #img[:62, :640] = menu
-            #flipped_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         if tips[1] and not tips[2]:
-            if detector.color == [255, 255, 255]:
+            if detector.color == [220, 220, 220]:
                 cv2.putText(flipped_RGB, 'Erasing Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
             else:
                 cv2.putText(flipped_RGB, 'Drawing Mode', (500, 420), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 3)
@@ -52,8 +49,6 @@ while True:
     cv2.putText(flipped_RGB, str(int(fps)), (580, 460), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
 
     res_image = cv2.cvtColor(flipped_RGB, cv2.COLOR_RGB2BGR)
-    cv2.imshow('Drawing', detector.drawing)
+    drawing = cv2.cvtColor(detector.drawing, cv2.COLOR_RGB2BGR)
+    cv2.imshow('Drawing', drawing)
     cv2.imshow('Image', res_image)
-
-
-
