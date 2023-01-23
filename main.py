@@ -19,6 +19,7 @@ for num in os.listdir(file):
 menu = img_list[0]
 
 while True:
+
     #Обрабатываем изображение
     ret, frame = cap.read()
     frame[:62, :640] = menu
@@ -30,9 +31,6 @@ while True:
     #Отслеживаем положение рук и отрисовываем их
     flipped_RGB = detector.findHands(flipped_RGB)
     landmark_list = detector.trackHands(flipped_RGB)
-
-    #if len(landmark_list) != 0:
-        #print(landmark_list[8])
 
     #Проверяем какие пальцы подняты
     tips = detector.HandsUp()

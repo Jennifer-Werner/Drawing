@@ -138,23 +138,20 @@ class handDetector():
 
     def Size_Mode(self, img):
 
-        self.cx, self.cy = (self.landmark_list[8][1] + self.landmark_list[4][1]) // 2, (self.landmark_list[8][2] + self.landmark_list[4][2]) // 2
         cv2.line(img, (self.landmark_list[8][1:]), (self.landmark_list[4][1:]), self.color, 3)
-        cv2.circle(img, (self.cx, self.cy), 10, self.color, -1)
+        cv2.circle(img, ((self.landmark_list[8][1] + self.landmark_list[4][1]) // 2, (self.landmark_list[8][2] + self.landmark_list[4][2]) // 2), 10, self.color, -1)
         length = math.dist(self.landmark_list[8][1:], self.landmark_list[4][1:])
-        print(length)
+
         cv2.rectangle(img, (50, 150), (85, 400), self.color, 3)
         cv2.rectangle(img, (50, 400 - int(length - 50)), (85, 400), self.color, -1)
         cv2.putText(img, f'{int((length - 50) / 2.5)}%', (50, 130), cv2.FONT_HERSHEY_DUPLEX, 2, self.color, 3)
 
         if self.color == [220, 220, 220]:
-            if length != 0:
-                self.erasing_size = 15 + int(length // 10)
+            self.erasing_size = 15 + int(length // 10)
             cv2.circle(img, (self.landmark_list[8][1:]), self.erasing_size, self.color, -1)
             cv2.circle(img, (self.landmark_list[4][1:]), self.erasing_size, self.color, -1)
+
         else:
-            if length != 0:
-                self.drawing_size = 5 + int(length // 10)
+            self.drawing_size = 5 + int(length // 10)
             cv2.circle(img, (self.landmark_list[8][1:]), self.drawing_size, self.color, -1)
             cv2.circle(img, (self.landmark_list[4][1:]), self.drawing_size, self.color, -1)
-
