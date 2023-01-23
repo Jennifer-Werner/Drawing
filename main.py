@@ -61,6 +61,13 @@ while True:
     cv2.putText(flipped_RGB, str(int(fps)), (580, 460), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 3)
 
     #Обрабатываем и показываем изображение
+
+    gray = cv2.cvtColor(detector.drawing, cv2.COLOR_BGR2GRAY)
+    ret, inv = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+    inv = cv2.cvtColor(inv, cv2.COLOR_GRAY2BGR)
+    flipped_RGB = cv2.bitwise_and(flipped_RGB, inv)
+    flipped_RGB = cv2.bitwise_or(flipped_RGB, detector.drawing)
+
     res_image = cv2.cvtColor(flipped_RGB, cv2.COLOR_RGB2BGR)
     drawing = cv2.cvtColor(detector.drawing, cv2.COLOR_RGB2BGR)
     cv2.imshow('Drawing', drawing)
